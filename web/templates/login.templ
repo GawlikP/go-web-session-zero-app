@@ -1,0 +1,113 @@
+package templates
+
+templ LoginPage(errorMsg string) {
+    @Base("Login") {
+        <section class="hero is-fullheight" x-data="loginForm()">
+            <div class="hero-body">
+                <div class="container">
+                    <div class="columns is-centered">
+                        <div class="column is-5-tablet is-4-desktop">
+                            <div class="box">
+                                <h1 class="title">TTRPG Platform</h1>
+                                <p class="subtitle">Sign in to continue</p>
+                                
+                                <!-- Errors -->
+                                if errorMsg != "" {
+                                    <div class="notification is-danger is-light">
+                                        {errorMsg}
+                                    </div>
+                                }
+                                
+                                <div x-show="error" 
+                                     x-transition
+                                     class="notification is-danger is-light"
+                                     x-text="error">
+                                </div>
+                                
+                                <!-- Form -->
+                                <form @submit.prevent="submit">
+                                    <div class="field">
+                                        <label class="label">Email</label>
+                                        <div class="control">
+                                            <input class="input" 
+                                                   type="email" 
+                                                   x-model="form.email"
+                                                   :class="{'is-danger': errors.email}"
+                                                   :disabled="loading"
+                                                   required />
+                                        </div>
+                                        <p x-show="errors.email" 
+                                           class="help is-danger" 
+                                           x-text="errors.email"></p>
+                                    </div>
+                                    
+                                    <div class="field">
+                                        <label class="label">Password</label>
+                                        <div class="control">
+                                            <input class="input" 
+                                                   type="password" 
+                                                   x-model="form.password"
+                                                   :class="{'is-danger': errors.password}"
+                                                   :disabled="loading"
+                                                   required />
+                                        </div>
+                                        <p x-show="errors.password" 
+                                           class="help is-danger" 
+                                           x-text="errors.password"></p>
+                                    </div>
+                                    
+                                    <div class="field">
+                                        <button class="button is-primary is-fullwidth" 
+                                                type="submit"
+                                                :class="{'is-loading': loading}"
+                                                :disabled="loading">
+                                            Login
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <script>
+        function loginForm() {
+            return {
+                form: { email: '', password: '' },
+                loading: false,
+                error: '',
+                errors: {},
+                
+                async submit() {
+                    this.error = '';
+                    this.errors = {};
+                    this.loading = true;
+                    
+                    try {
+                        const res = await fetch('/api/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.form)
+                        });
+                        
+                        const data = await res.json();
+                        
+                        if (data.success) {
+                            window.location.href = data.redirect_url || '/dashboard';
+                        } else {
+                            this.error = data.error || 'Login failed';
+                            this.errors = data.fields || {};
+                        }
+                    } catch (e) {
+                        this.error = 'Connection error. Please try again.';
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            }
+        }
+        </script>
+    }
+}
