@@ -4,13 +4,13 @@ import "strings"
 
 type LogFilter struct {
 	SkipPrefixes []string
-	SkipExact []string
-	SkipStatus []int
+	SkipExact    []string
+	SkipStatus   []int
 }
 
 func DefaultLogFilter() *LogFilter {
 	return &LogFilter{
-		SkipPrefixes: []string {
+		SkipPrefixes: []string{
 			"/.well-known",
 		},
 		SkipExact: []string{

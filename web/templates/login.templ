@@ -13,14 +13,14 @@ templ LoginPage(errorMsg string) {
                                 
                                 <!-- Errors -->
                                 if errorMsg != "" {
-                                    <div class="notification is-danger is-light">
+                                    <div class="notification is-danger is-dark">
                                         {errorMsg}
                                     </div>
                                 }
                                 
                                 <div x-show="error" 
                                      x-transition
-                                     class="notification is-danger is-light"
+                                     class="notification is-danger is-dark"
                                      x-text="error">
                                 </div>
                                 
