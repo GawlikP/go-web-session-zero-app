@@ -13,6 +13,7 @@ func NewRouter(cfg *config.Config) http.Handler {
 
 	staticHandler := handler.StaticHandler("web/static", true)
 	mux.Handle("GET /static/", http.StripPrefix("/static/", staticHandler))
+	mux.Handle("GET /health", handler.HealthCheck())
 	mux.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r) // Return 404
 	})

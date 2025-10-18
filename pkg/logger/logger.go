@@ -79,16 +79,12 @@ func createLogger(handler slog.Handler, cfg Config) *slog.Logger {
 }
 
 func openLogFile(path string) (*os.File, error) {
-	// Extract directory from path
 	dir := filepath.Dir(path)
 
-	// Create directory if it doesn't exist
-	// 0755 = rwxr-xr-x (owner: rwx, others: r-x)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return nil, fmt.Errorf("failed to create log directory: %w", err)
 	}
 
-	// Open/create file
 	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open log file: %w", err)

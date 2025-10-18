@@ -19,6 +19,7 @@ func DefaultLogFilter() *LogFilter {
 			"/sitemap.xml",
 			"/ads.txt",
 			"/security.txt",
+			"/health",
 		},
 		SkipStatus: []int{304},
 	}

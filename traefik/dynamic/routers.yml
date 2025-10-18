@@ -1,0 +1,9 @@
+http:
+  routers:
+    ssr-router:
+      rule: "Host(`localhost`)"
+      service: "ssr-service"
+      entryPoints:
+        - "web"
+      middlewares:
+        - "security-headers"

@@ -37,12 +37,6 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		if logFilter.ShouldSkip(r.URL.Path, wrapped.statusCode) {
 			return
 		}
-		// if r.URL.Path == "/favicon.ico" && wrapped.statusCode == 200 || wrapped.statusCode == 304 || wrapped.statusCode == 404 {
-		// 	return
-		// }
-		// if r.URL.Path == "/static/css/bulma.min.css" && wrapped.statusCode == 200 || wrapped.statusCode == 304 {
-		// 	return
-		// }
 		duration := time.Since(start)
 		logger.Info("Request completed",
 			"status", wrapped.statusCode,

@@ -1,0 +1,86 @@
+# syntax=docker/dockerfile:1
+
+# ==============================================================================
+# STAGE 1: base
+# ==============================================================================
+FROM golang:1.25-alpine AS base
+
+RUN apk add --no-cache \
+    git \
+    ca-certificates \
+    make \
+    curl \
+    tzdata \
+    wget
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
+
+# ==============================================================================
+# STAGE 2: builder
+# ==============================================================================
+FROM base AS builder
+
+RUN go install github.com/a-h/templ/cmd/templ@latest
+
+COPY . .
+
+RUN templ generate
+
+RUN CGO_ENABLED=0 GOOS=linux go build \
+    -ldflags="-w -s" \
+    -a \
+    -installsuffix cgo \
+    -o /app/bin/ssr \
+    ./cmd/ssr/main.go
+
+RUN test -f /app/bin/ssr && chmod +x /app/bin/ssr
+
+# ==============================================================================
+# STAGE 3: development
+# ==============================================================================
+FROM base AS development
+
+RUN go install github.com/air-verse/air@latest && \
+    go install github.com/a-h/templ/cmd/templ@latest
+
+RUN mkdir -p /app/tmp /app/logs
+
+EXPOSE 4000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:4000/health || exit 1
+
+# Air entry point
+ENTRYPOINT ["air"]
+
+# Point to config in service directory (will be available via volume mount)
+CMD ["-c", "/app/cmd/ssr/.air.toml"]
+
+# ==============================================================================
+# STAGE 4: production
+# ==============================================================================
+FROM alpine:latest AS production
+
+RUN apk --no-cache add ca-certificates tzdata wget
+
+RUN adduser -D -H -u 1000 appuser
+
+WORKDIR /home/appuser
+
+COPY --from=builder /app/bin/ssr /usr/local/bin/ssr
+COPY --from=builder /app/web /home/appuser/web
+
+RUN chown -R appuser:appuser /home/appuser
+
+USER appuser
+
+EXPOSE 4000
+
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:4000/health || exit 1
+
+ENTRYPOINT ["/usr/local/bin/ssr"]
+CMD []

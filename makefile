@@ -5,3 +5,6 @@ lint:
 	go fmt ./...
 generate:
 	templ generate ./...
+
+build:
+	go build -o ssr ./cmd/ssr

@@ -1,0 +1,11 @@
+http:
+  services:
+    ssr-service:
+      loadBalancer:
+        servers:
+          - url: "http://ssr-service:4000"
+        healthCheck:
+          path: "/health"
+          interval: "30s"
+          timeout: "5s"
+
