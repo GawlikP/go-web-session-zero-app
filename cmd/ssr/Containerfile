@@ -3,7 +3,7 @@
 # ==============================================================================
 # STAGE 1: base
 # ==============================================================================
-FROM golang:1.25-alpine AS base
+FROM docker.io/library/golang:1.25-alpine AS base
 
 RUN apk add --no-cache \
     git \

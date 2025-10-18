@@ -16,7 +16,7 @@ services:
     container_name: traefik
     restart: unless-stopped
     ports:
-      - "8000:80" # updated for development, to be changed on production
+      - "80:80" # updated for development, to be changed on production
       - "8080:8080"
     networks:
       - ttrpg-network
@@ -36,6 +36,8 @@ services:
       - "com.ttrpg.component=reverse-proxy"
 
   ssr-service:
+    env_file:
+      - .env
     build:
       context: .                          # Project root as context
       dockerfile: ./cmd/ssr/Containerfile # Containerfile location
