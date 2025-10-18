@@ -5,6 +5,8 @@ networks:
     driver: bridge
 
 volumes:
+  go-mod-cache:
+    driver: local
   traefik-logs:
     driver: local
 
@@ -14,8 +16,8 @@ services:
     container_name: traefik
     restart: unless-stopped
     ports:
-      - "80:80"       # HTTP
-      - "8080:8080"   # Dashboard (consider removing in production)
+      - "8000:80" # updated for development, to be changed on production
+      - "8080:8080"
     networks:
       - ttrpg-network
     volumes:
@@ -34,19 +36,24 @@ services:
       - "com.ttrpg.component=reverse-proxy"
 
   ssr-service:
+    env_file:
+      - .env
     build:
-      context: .
-      dockerfile: ./cmd/ssr/Containerfile
-      target: production  # <-- CHANGED: Use production stage
-    image: ssr-service:latest
+      context: .                          # Project root as context
+      dockerfile: ./cmd/ssr/Containerfile # Containerfile location
+      target: development
     container_name: ssr-service
     restart: unless-stopped
     networks:
       - ttrpg-network
-    # NO volumes - code is baked into image
+    volumes:
+      - ./:/app
+      - /app/tmp
+      - go-mod-cache:/go/pkg/mod
+      - ./logs:/app/logs
     environment:
-      - ENV=production        # <-- CHANGED
-      - LOG_LEVEL=info        # <-- CHANGED: Less verbose
+      - ENV=development
+      - LOG_LEVEL=debug
       - SERVER_ADDRESS=0.0.0.0:4000
       - TZ=Europe/Warsaw
       - SSR_PORT=4000
@@ -54,11 +61,10 @@ services:
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/health"]
       interval: 30s
-      timeout: 3s            # <-- CHANGED: Faster timeout
+      timeout: 5s
       retries: 3
-      start_period: 10s      # <-- CHANGED: Faster startup expected
+      start_period: 40s
     depends_on:
-      traefik:
-        condition: service_healthy
+      - traefik
     labels:
       - "com.ttrpg.component=web-server"
