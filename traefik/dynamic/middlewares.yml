@@ -1,6 +1,3 @@
-# HTTP Middlewares
-# Transform requests/responses
-
 http:
   middlewares:
     # Security headers
@@ -22,3 +19,8 @@ http:
         average: 100
         period: "1s"
         burst: 50
+    
+    # Dashboard authentication
+    dashboard-auth:
+      basicAuth:
+        usersFile: "/etc/traefik/auth/.htpasswd"

@@ -4,11 +4,13 @@ global:
 
 api:
   dashboard: true
-  insecure: true
+  insecure: false
 
 entryPoints:
   web:
     address: ":80"
+  traefik:           
+    address: ":8080" 
 
 providers:
   file:
@@ -16,9 +18,11 @@ providers:
     watch: true
 
 log:
-  level: "DEBUG"
+  level: "INFO"
   format: "common"
 
 accessLog:
   format: "common"
 
+ping:
+  entryPoint: web

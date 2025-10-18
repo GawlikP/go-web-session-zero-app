@@ -6,3 +6,4 @@
 secrets/
 logs/*
 \$ssr\$
+traefik/auth/.htpasswd

@@ -1,9 +1,23 @@
 http:
   routers:
+    # HTTPS router
     ssr-router:
-      rule: "Host(`localhost`)"
+      rule: "Host(`session-one.duckdns.org`)"
       service: "ssr-service"
       entryPoints:
-        - "web"
+        - websecure
+      tls:
+        certResolver: letsencrypt
       middlewares:
         - "security-headers"
+
+    dashboard-secure:
+      rule: "Host(`session-one.duckdns.org`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      service: api@internal
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - dashboard-auth
+      priority: 100  # Higher priority than ssr-router

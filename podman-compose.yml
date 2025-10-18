@@ -10,34 +10,60 @@ volumes:
 
 services:
   traefik:
-    image: docker.io/library/traefik:v3.0
-    container_name: traefik
-    restart: unless-stopped
-    ports:
-      - "80:80"       # HTTP
-      - "8080:8080"   # Dashboard (consider removing in production)
-    networks:
-      - ttrpg-network
-    volumes:
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./traefik/dynamic:/etc/traefik/dynamic:ro
-      - traefik-logs:/var/log/traefik
-    environment:
-      - TZ=Europe/Warsaw
-    healthcheck:
-      test: ["CMD", "traefik", "healthcheck", "--ping"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    labels:
-      - "com.ttrpg.component=reverse-proxy"
-
+      image: docker.io/library/traefik:v3.0
+      container_name: traefik
+      restart: unless-stopped
+      command:
+        # API
+        - "--api.dashboard=true"
+        - "--api.insecure=false"
+        # Entry points
+        - "--entrypoints.web.address=:80"
+        - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+        - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+        - "--entrypoints.websecure.address=:443"
+        - "--entrypoints.traefik.address=:8080"
+        # Let's Encrypt
+        - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
+        - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+        - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+        - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+        # Providers
+        - "--providers.file.directory=/etc/traefik/dynamic"
+        - "--providers.file.watch=true"
+        # Logging
+        - "--log.level=INFO"
+        - "--accesslog=true"
+        # Ping
+        - "--ping.entrypoint=web"
+      ports:
+        - "80:80"
+        - "443:443"
+        - "8080:8080"
+      networks:
+        - ttrpg-network
+      volumes:
+        - ./traefik/dynamic:/etc/traefik/dynamic:ro
+        - ./traefik/auth:/etc/traefik/auth:ro
+        - ./traefik/letsencrypt:/letsencrypt
+        - traefik-logs:/var/log/traefik
+      environment:
+        - TZ=Europe/Warsaw
+      env_file:
+        - .env
+      healthcheck:
+        test: ["CMD", "traefik", "healthcheck", "--ping"]
+        interval: 30s
+        timeout: 5s
+        retries: 3
+        start_period: 10s
+      labels:
+        - "com.ttrpg.component=reverse-proxy"
   ssr-service:
     build:
       context: .
       dockerfile: ./cmd/ssr/Containerfile
-      target: production  # <-- CHANGED: Use production stage
+      target: production 
     image: ssr-service:latest
     container_name: ssr-service
     restart: unless-stopped
@@ -45,8 +71,8 @@ services:
       - ttrpg-network
     # NO volumes - code is baked into image
     environment:
-      - ENV=production        # <-- CHANGED
-      - LOG_LEVEL=info        # <-- CHANGED: Less verbose
+      - ENV=production 
+      - LOG_LEVEL=info
       - SERVER_ADDRESS=0.0.0.0:4000
       - TZ=Europe/Warsaw
       - SSR_PORT=4000
@@ -54,9 +80,9 @@ services:
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/health"]
       interval: 30s
-      timeout: 3s            # <-- CHANGED: Faster timeout
+      timeout: 3s
       retries: 3
-      start_period: 10s      # <-- CHANGED: Faster startup expected
+      start_period: 10s
     depends_on:
       traefik:
         condition: service_healthy
