@@ -1,0 +1,9 @@
+http:
+  routers:
+    # Dashboard without auth for easier dev
+    dashboard-dev:
+      rule: "(PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      service: api@internal
+      entryPoints:
+        - traefik
+      priority: 1

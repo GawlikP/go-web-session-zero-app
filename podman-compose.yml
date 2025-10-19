@@ -43,10 +43,10 @@ services:
       networks:
         - ttrpg-network
       volumes:
-        - ./traefik/dynamic:/etc/traefik/dynamic:ro
-        - ./traefik/auth:/etc/traefik/auth:ro
-        - ./traefik/letsencrypt:/letsencrypt
-        - traefik-logs:/var/log/traefik
+        - ./traefik/production/dynamic:/etc/traefik/dynamic:ro
+        - ./traefik/production/auth:/etc/traefik/auth:ro
+        - ./traefik/production/letsencrypt:/letsencrypt
+        - traefik-logs:/var/log/traefik  - traefik-logs:/var/log/traefik
       environment:
         - TZ=Europe/Warsaw
       env_file:

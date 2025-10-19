@@ -1,0 +1,11 @@
+http:
+  routers:
+    # Development router - HTTP only, localhost
+    ssr-router-dev:
+      rule: "PathPrefix(`/`)"
+      service: "ssr-service"
+      entryPoints:
+        - web
+      middlewares:
+        - security-headers
+      priority: 100

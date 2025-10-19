@@ -1,61 +1,65 @@
 version: '3.8'
 
 networks:
-  ttrpg-network:
+  ttrpg-network-dev:
     driver: bridge
 
 volumes:
   go-mod-cache:
     driver: local
-  traefik-logs:
-    driver: local
 
 services:
-  traefik:
+  traefik-dev:
     image: docker.io/library/traefik:v3.0
-    container_name: traefik
+    container_name: traefik-dev
     restart: unless-stopped
+    command:
+      # API
+      - "--api.dashboard=true"
+      - "--api.insecure=true"  # Dev: no auth needed
+      # Entry points (HTTP only, no HTTPS)
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.traefik.address=:8080"
+      # Providers
+      - "--providers.file.directory=/etc/traefik/dynamic"
+      - "--providers.file.watch=true"
+      # Logging
+      - "--log.level=DEBUG"
+      - "--accesslog=true"
+      # Ping
+      - "--ping=true"
+      - "--ping.entrypoint=web"
     ports:
-      - "8000:80" # updated for development, to be changed on production
+      - "8000:80"
       - "8080:8080"
     networks:
-      - ttrpg-network
+      - ttrpg-network-dev
     volumes:
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./traefik/dynamic:/etc/traefik/dynamic:ro
-      - traefik-logs:/var/log/traefik
+      - ./traefik/development/dynamic:/etc/traefik/dynamic:ro
     environment:
       - TZ=Europe/Warsaw
-    healthcheck:
-      test: ["CMD", "traefik", "healthcheck", "--ping"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
     labels:
-      - "com.ttrpg.component=reverse-proxy"
+      - "com.ttrpg.component=reverse-proxy-dev"
 
   ssr-service:
     env_file:
       - .env
     build:
-      context: .                          # Project root as context
-      dockerfile: ./cmd/ssr/Containerfile # Containerfile location
-      target: development
-    container_name: ssr-service
-    restart: unless-stopped
+      context: .
+      dockerfile: ./cmd/ssr/Containerfile
+      target: development  # Uses Air for hot-reload
+    container_name: ssr-service-dev
     networks:
-      - ttrpg-network
+      - ttrpg-network-dev
     volumes:
-      - ./:/app
-      - /app/tmp
-      - go-mod-cache:/go/pkg/mod
-      - ./logs:/app/logs
+      - ./:/app                    # Mount source for hot-reload
+      - /app/tmp                   # Air temp directory
+      - go-mod-cache:/go/pkg/mod   # Cache Go modules
+      - ./logs:/app/logs           # Mount logs
     environment:
       - ENV=development
       - LOG_LEVEL=debug
       - SERVER_ADDRESS=0.0.0.0:4000
-      - TZ=Europe/Warsaw
       - SSR_PORT=4000
       - HOST=0.0.0.0
     healthcheck:
@@ -63,8 +67,8 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 40s
+      start_period: 40s  # Air needs time to start
     depends_on:
-      - traefik
+      - traefik-dev
     labels:
-      - "com.ttrpg.component=web-server"
+      - "com.ttrpg.component=web-server-dev"
