@@ -1,0 +1,45 @@
+services:
+  rabbitmq-testing:
+    env_file:
+      - .env.test
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    image: docker.io/library/rabbitmq:3.13-management-alpine
+    container_name: rabbitmq-testing
+    restart: unless-stopped
+    ports:
+      - "5672:5672"    # AMQP protocol port
+      - "15672:15672"  # Management UI/HTTP API port
+    networks:
+      - testing-network
+    volumes:
+      - rabbitmq-testing-data:/var/lib/rabbitmq:Z
+      - rabbitmq-testing-logs:/var/log/rabbitmq:Z
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-admin}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS:-admin123}
+      - RABBITMQ_DEFAULT_VHOST=/
+      - RABBITMQ_ERLANG_COOKIE=development-secret-cookie
+      - TZ=Europe/Warsaw
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+
+networks:
+  testing-network:
+    driver: bridge
+
+volumes:
+  rabbitmq-testing-data:
+    driver: local
+  rabbitmq-testing-logs:
+    driver: local

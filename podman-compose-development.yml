@@ -7,6 +7,10 @@ networks:
 volumes:
   go-mod-cache:
     driver: local
+  rabbitmq-data:
+    driver: local
+  rabbitmq-logs:
+    driver: local
 
 services:
   traefik-dev:
@@ -69,6 +73,44 @@ services:
       retries: 3
       start_period: 40s  # Air needs time to start
     depends_on:
-      - traefik-dev
+      traefik-dev:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     labels:
       - "com.ttrpg.component=web-server-dev"
+
+  rabbitmq:
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    image: docker.io/library/rabbitmq:3.13-management-alpine
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"    # AMQP protocol port
+      - "15672:15672"  # Management UI/HTTP API port
+    networks:
+      - ttrpg-network-dev
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq:Z
+      - rabbitmq-logs:/var/log/rabbitmq:Z
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-admin}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS:-admin123}
+      - RABBITMQ_ERLANG_COOKIE=development-secret-cookie
+      - RABBITMQ_DEFAULT_VHOST=/
+      - TZ=Europe/Warsaw
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 10s

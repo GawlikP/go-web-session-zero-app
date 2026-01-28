@@ -7,3 +7,4 @@ secrets/
 logs/*
 \$ssr\$
 traefik/auth/.htpasswd
+.notes

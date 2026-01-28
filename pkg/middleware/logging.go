@@ -24,6 +24,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		)
 
 		ctx := context.WithValue(r.Context(), "logger", logger)
+		ctx = context.WithValue(ctx, "request_id", requestID)
 		r = r.WithContext(ctx)
 
 		wrapped := &responseWriter{

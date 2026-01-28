@@ -3,7 +3,6 @@ package handler
 import (
 	"log/slog"
 	"net/http"
-	// "session-zero-app/pkg/logger"
 	"session-zero-app/internal/ssr/types"
 	"session-zero-app/pkg/response"
 	"session-zero-app/pkg/validator"
@@ -11,8 +10,9 @@ import (
 
 func HandleLoginPost() http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
 		var req types.LoginRequest
-		log := r.Context().Value("logger").(*slog.Logger)
+		log := ctx.Value("logger").(*slog.Logger)
 		log.Info("API login attempt")
 		if err := response.ParseJSON(r, &req); err != nil {
 			log.Warn("Invalid JSON", "error", err)
@@ -32,7 +32,6 @@ func HandleLoginPost() http.HandlerFunc {
 		}
 
 		log.Info("Validation Passed!", "email", req.Email)
-		log.Info("Authentication failed", "email", req.Email)
 		response.WriteError(w, http.StatusUnauthorized, "Invalid email or password")
 	})
 }

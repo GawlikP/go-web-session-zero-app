@@ -14,10 +14,10 @@ import (
 	"session-zero-app/internal/ssr/config"
 	"session-zero-app/internal/ssr/router"
 	"session-zero-app/pkg/logger"
+	rbit "session-zero-app/pkg/messaging/rabbitmq"
 )
 
 func main() {
-	godotenv.Load()
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using environment variables")
 	}
@@ -34,7 +34,28 @@ func main() {
 	if err != nil {
 		log.Fatalf("Logger error: %v", err)
 	}
-	rt := router.NewRouter(cfg)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	poolCfg := rbit.PoolConfig{
+		URL: cfg.RabbitMQ.URL,
+		MinConnections: cfg.RabbitMQ.MinConnections,
+		MaxConnections: cfg.RabbitMQ.MaxConnections,
+		ConnectionTimeout: cfg.RabbitMQ.Timeout,
+	}
+	pool, err := rbit.NewConnectionPool(&poolCfg)
+	if err != nil {
+		logger.Info("RabbitMQ Pool Error", "Pool Error:", err.Error())
+		log.Fatalf("Server error: %v", err)
+	}
+	defer pool.CloseAll()
+
+	err = rbit.InitializeTopology(ctx,pool)
+	if err != nil {
+		logger.Info("RabbitMQ Pool Error", "Topology error:", err.Error())
+		log.Fatalf("Server error: %v", err)
+	}
+	rt := router.NewRouter(cfg, pool)
 
 	server := &http.Server{
 		Addr:         cfg.Address(),
@@ -56,7 +77,7 @@ func main() {
 	<-quit
 
 	log.Println("Shutting down server...")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {

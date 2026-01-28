@@ -6,9 +6,10 @@ import (
 	"session-zero-app/internal/ssr/config"
 	"session-zero-app/internal/ssr/handler"
 	"session-zero-app/pkg/middleware"
+	rbit "session-zero-app/pkg/messaging/rabbitmq"
 )
 
-func NewRouter(cfg *config.Config) http.Handler {
+func NewRouter(cfg *config.Config, rpool *rbit.ConnectionPool) http.Handler {
 	mux := http.NewServeMux()
 
 	staticHandler := handler.StaticHandler("web/static", true)
@@ -19,6 +20,7 @@ func NewRouter(cfg *config.Config) http.Handler {
 	})
 	mux.HandleFunc("GET /{$}", handler.HandleLoginGet())
 	mux.HandleFunc("POST /api/login", apiHandler.HandleLoginPost())
+	mux.HandleFunc("POST /api/register", apiHandler.HandleRegisterPost(rpool))
 	handler := middleware.Chain(
 		mux,
 		middleware.LoggingMiddleware,

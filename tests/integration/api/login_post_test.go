@@ -9,6 +9,7 @@ import (
 )
 
 func TestSSRLoginAPI(t *testing.T) {
+	integration.TestSetup(t)
 	server := integration.SetupTestServer(t)
 	defer server.Close()
 

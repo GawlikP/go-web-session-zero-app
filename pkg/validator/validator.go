@@ -71,3 +71,9 @@ func (v *Validator) MaxLength(field, value string, m int) {
 		v.AddError(field, fmt.Sprintf("Must be at most %d characters", m))
 	}
 }
+
+func (v *Validator) MustMatch(field string, value string, other string) {
+		if value != other {
+				v.AddError(field, "Values do not match")
+		}
+}

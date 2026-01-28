@@ -1,0 +1,128 @@
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯ podman-compose -f podman-compose-testing.yml up
+Error: no container with name or ID "go-web-session-zero-app_rabbitmq-testing_1" found: no such container
+Error: no container with ID or name "go-web-session-zero-app_rabbitmq-testing_1" found: no such container
+Error: not all containers could be removed from pod 7be0345cb474396773298c0f5f5fa018b119e1e4186ebeacb6b54ca1de5813f6: removing pod containers
+Error: error removing container 2269d14f188276ddcb02f73524e2f549eb9fa25dee59ec53a638ba12819e2383 from pod 7be0345cb474396773298c0f5f5fa018b119e1e4186ebeacb6b54ca1de5813f6: cannot remove container 2269d14f188276ddcb02f73524e2f549eb9fa25dee59ec53a638ba12819e2383 as it is running - running or paused containers cannot be removed without force: container state improper
+Error: error removing container 57bc3df3ec329bf864144306f62d2945c197a9b9f1a0b22eb21358068136f800 from pod 7be0345cb474396773298c0f5f5fa018b119e1e4186ebeacb6b54ca1de5813f6: a container that depends on container 57bc3df3ec329bf864144306f62d2945c197a9b9f1a0b22eb21358068136f800 could not be stopped: container state improper
+Error: error removing container eaa88de3d46b3736d91c363020a836e0b27bdbe22533e78322c7c2d0555c7e7d from pod 7be0345cb474396773298c0f5f5fa018b119e1e4186ebeacb6b54ca1de5813f6: cannot remove container eaa88de3d46b3736d91c363020a836e0b27bdbe22533e78322c7c2d0555c7e7d as it is running - running or paused containers cannot be removed without force: container state improper
+Error: "go-web-session-zero-app_ttrpg-network-dev" has associated containers with it. Use -f to forcibly delete containers and pods: network is being used
+Traceback (most recent call last):
+  File "/usr/bin/podman-compose", line 8, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/usr/lib/python3.13/site-packages/podman_compose.py", line 4256, in main
+    asyncio.run(async_main())
+    ~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/site-packages/podman_compose.py", line 4252, in async_main
+    await podman_compose.run()
+  File "/usr/lib/python3.13/site-packages/podman_compose.py", line 2072, in run
+    retcode = await cmd(self, args)
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/site-packages/podman_compose.py", line 3170, in compose_up
+    podman_args = await container_to_args(compose, cnt, detached=False, no_deps=args.no_deps)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/site-packages/podman_compose.py", line 1158, in container_to_args
+    raise ValueError("Env file at {} does not exist".format(i))
+ValueError: Env file at /home/piotr/Documents/project/go-web-session-zero-app/.env.test does not exist
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+[✖] 󰛓  podman-compose -f podman-compose-testing.yml up >> crash-logs.log
+Error: no container with name or ID "go-web-session-zero-app_rabbitmq-testing_1" found: no such container
+Error: no container with ID or name "go-web-session-zero-app_rabbitmq-testing_1" found: no such container
+Error: not all containers could be removed from pod 7be0345cb474396773298c0f5f5fa018b119e1e4186ebeacb6b54ca1de5813f6: removing pod containers
+Error: error removing container eaa88de3d46b3736d91c363020a836e0b27bdbe22533e78322c7c2d0555c7e7d from pod 7be0345cb474396773298c0f5f5fa018b119e1e4186ebeacb6b54ca1de5813f6: cannot remove container eaa88de3d46b3736d91c363020a836e0b27bdbe22533e78322c7c2d0555c7e7d as it is running - running or paused containers cannot be removed without force: container state improper
+Error: error removing container 2269d14f188276ddcb02f73524e2f549eb9fa25dee59ec53a638ba12819e2383 from pod 7be0345cb474396773298c0f5f5fa018b119e1e4186ebeacb6b54ca1de5813f6: cannot remove container 2269d14f188276ddcb02f73524e2f549eb9fa25dee59ec53a638ba12819e2383 as it is running - running or paused containers cannot be removed without force: container state improper
+Error: error removing container 57bc3df3ec329bf864144306f62d2945c197a9b9f1a0b22eb21358068136f800 from pod 7be0345cb474396773298c0f5f5fa018b119e1e4186ebeacb6b54ca1de5813f6: a container that depends on container 57bc3df3ec329bf864144306f62d2945c197a9b9f1a0b22eb21358068136f800 could not be stopped: container state improper
+Error: "go-web-session-zero-app_ttrpg-network-dev" has associated containers with it. Use -f to forcibly delete containers and pods: network is being used
+Traceback (most recent call last):
+  File "/usr/bin/podman-compose", line 8, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/usr/lib/python3.13/site-packages/podman_compose.py", line 4256, in main
+    asyncio.run(async_main())
+    ~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/site-packages/podman_compose.py", line 4252, in async_main
+    await podman_compose.run()
+  File "/usr/lib/python3.13/site-packages/podman_compose.py", line 2072, in run
+    retcode = await cmd(self, args)
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/site-packages/podman_compose.py", line 3170, in compose_up
+    podman_args = await container_to_args(compose, cnt, detached=False, no_deps=args.no_deps)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/site-packages/podman_compose.py", line 1158, in container_to_args
+    raise ValueError("Env file at {} does not exist".format(i))
+ValueError: Env file at /home/piotr/Documents/project/go-web-session-zero-app/.env.test does not exist
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+[✖] 󰛓  podman-compose -f podman-compose-testing.yml logs
+Error: no container with name or ID "go-web-session-zero-app_rabbitmq-testing_1" found: no such container
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯ podman-compose -f podman-compose-testing.yml logs >> crash-logs.log
+Error: no container with name or ID "go-web-session-zero-app_rabbitmq-testing_1" found: no such container
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯ cat crash-logs.log
+─────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+     │ File: crash-logs.log   <EMPTY>
+─────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯ podman stop -a
+57bc3df3ec329bf864144306f62d2945c197a9b9f1a0b22eb21358068136f800
+2269d14f188276ddcb02f73524e2f549eb9fa25dee59ec53a638ba12819e2383
+eaa88de3d46b3736d91c363020a836e0b27bdbe22533e78322c7c2d0555c7e7d
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯ podman rm -af
+eaa88de3d46b3736d91c363020a836e0b27bdbe22533e78322c7c2d0555c7e7d
+57bc3df3ec329bf864144306f62d2945c197a9b9f1a0b22eb21358068136f800
+2269d14f188276ddcb02f73524e2f549eb9fa25dee59ec53a638ba12819e2383
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯ podman-compose -f podman-compose-testing.yml logs >> crash-logs.log
+Error: no container with name or ID "go-web-session-zero-app_rabbitmq-testing_1" found: no such container
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯ podman pod rm -af
+7be0345cb474396773298c0f5f5fa018b119e1e4186ebeacb6b54ca1de5813f6
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯ podman network prune -f
+go-web-session-zero-app_ttrpg-network-dev
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯ podman network prune -fa
+Error: unknown shorthand flag: 'a' in -a
+See 'podman network prune --help'
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+[✖] 󰛓  podman ps -a
+CONTAINER ID  IMAGE       COMMAND     CREATED     STATUS      PORTS       NAMES
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯ podman-compose -f podman-compose-testing.yml logs >> crash-logs.log
+Error: no container with name or ID "go-web-session-zero-app_rabbitmq-testing_1" found: no such container
+
+ piotr@piotr-rogstrixg513rmg513rm in repo: go-web-session-zero-app on  p-01-ssr-login-page +43/- [!?] via  v1.25.3
+ 󰛓 ❯

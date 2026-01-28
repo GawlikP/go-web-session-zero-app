@@ -8,6 +8,7 @@ import (
 )
 
 func TestLoginPageSSR(t *testing.T) {
+	TestSetup(t)
 	server := SetupTestServer(t)
 
 	tests := []struct {
